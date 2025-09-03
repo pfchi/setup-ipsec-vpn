@@ -2,6 +2,12 @@
   "$schema": "https://schema.management.azure.com/schemas/2015-01-01/deploymentTemplate.json#",
   "contentVersion": "1.0.0.0",
   "parameters": {
+    "adminUsername": {
+      "type": "string"
+    },
+    "adminPublicKey": {
+      "type": "secureString"
+    },
     "username": {
       "type": "string",
       "minLength": 1,
@@ -73,7 +79,7 @@
       "version": "latest"
     },
     "installScriptURL": "https://raw.githubusercontent.com/hwdsl2/setup-ipsec-vpn/master/azure/install.sh",
-    "installCommand": "[concat('sh install.sh ', variables('quote'), parameters('preSharedKey'), variables('quote'), ' ', variables('quote'), parameters('username'), variables('quote'), ' ', variables('quote'), parameters('password'), variables('quote'))]"
+    "installCommand": "[concat('bash -c \"sudo apt-get update && sudo apt-get install -y software-properties-common && sudo add-apt-repository universe && sudo apt-get update && sh install.sh ', variables('quote'), parameters('preSharedKey'), variables('quote'), ' ', variables('quote'), parameters('username'), variables('quote'), ' ', variables('quote'), parameters('password'), variables('quote'), '\"')]"
   },
   "resources": [
     {
@@ -164,8 +170,20 @@
         },
         "osProfile": {
           "computerName": "[variables('vmName')]",
-          "adminUsername": "[parameters('username')]",
-          "adminPassword": "[parameters('password')]"
+          //"adminUsername": "[parameters('username')]",
+          //"adminPassword": "[parameters('password')]"
+          "adminUsername": "[parameters('adminUsername')]",
+          "linuxConfiguration": {
+                        "disablePasswordAuthentication": true,
+                        "ssh": {
+                            "publicKeys": [
+                                {
+                                    "path": "[concat('/home/', parameters('adminUsername'), '/.ssh/authorized_keys')]",
+                                    "keyData": "[parameters('adminPublicKey')]"
+                                }
+                            ]
+                        }
+                    }
         },
         "storageProfile": {
           "imageReference": "[variables(parameters('image'))]",

@@ -2,6 +2,12 @@
   "$schema": "https://schema.management.azure.com/schemas/2015-01-01/deploymentParameters.json#",
   "contentVersion": "1.0.0.0",
   "parameters": {
+    "adminUsername": {
+      "value": "azureuser"
+    },
+    "adminPublicKey": {
+      "value": "ssh-rsa *********************************************************************= generated-by-azure"
+    },
     "username": {
       "value": "Vpnuser"
     },
@@ -10,6 +16,12 @@
     },
     "preSharedKey": {
       "value": "mypsksupersecure"
+    },
+    "image": {
+      "value": "ubuntu22.04"
+    },
+    "VMSize": {
+      "value": "Standard_B1ms"
     }
   }
 }
